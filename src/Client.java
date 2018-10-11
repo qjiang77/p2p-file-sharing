@@ -37,6 +37,7 @@ public class Client {
 				sendMessage(message);
 				//Receive the upperCase sentence from the server
 				MESSAGE = (String)in.readObject();
+
 				//show the message to the user
 				System.out.println("Receive message: " + MESSAGE);
 			}
