@@ -1,7 +1,9 @@
+package getStart;
+
 import com.jcraft.jsch.*;
 
 public class ConfigEnv {
-    public static void configSSH(RemotePeerInfo pInfo) {
+    public static void configSSH(PeerInfo pInfo) {
         String userName = "jiangchu";
         JSch jsch = new JSch();
         Session session;

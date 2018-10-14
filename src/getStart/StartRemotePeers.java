@@ -1,14 +1,15 @@
+package getStart;
+
 import java.io.*;
 import java.util.*;
 
 public class StartRemotePeers {
 
-	public Vector<RemotePeerInfo> peerInfoVector;
+	public Vector<PeerInfo> peerInfoVector;
 	
 	public void getConfiguration()
 	{
 		String st;
-		int i1;
 		peerInfoVector = new Vector<>();
 		try {
 			BufferedReader in = new BufferedReader(new FileReader("PeerInfo.cfg"));
@@ -16,7 +17,7 @@ public class StartRemotePeers {
 				
 				 String[] tokens = st.split("\\s+");
 			    
-			     peerInfoVector.addElement(new RemotePeerInfo(tokens[0], tokens[1], tokens[2]));
+			     peerInfoVector.addElement(new PeerInfo(tokens[0], tokens[1], tokens[2]));
 			
 			}
 			
@@ -43,7 +44,7 @@ public class StartRemotePeers {
 
 			// start clients at remote hosts
 			for (int i = 0; i < myStart.peerInfoVector.size(); i++) {
-				RemotePeerInfo pInfo = myStart.peerInfoVector.elementAt(i);
+				PeerInfo pInfo = myStart.peerInfoVector.elementAt(i);
 
 				// comment this line if already copied SSH keys
 				ConfigEnv.configSSH(pInfo);
