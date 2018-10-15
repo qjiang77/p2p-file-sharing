@@ -1,11 +1,22 @@
 package messages;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class HandshakeMessage implements Message{
+
     private int peerId;
-    HandshakeMessage(int peerId){
-        this.peerId = peerId;
+
+    HandshakeMessage(byte[] bytes) throws Exception {
+        if(bytes.length != 32) {
+            throw new Exception("invalid handshake message length");
+        }
+        String header = new String(Arrays.copyOfRange(bytes, 0, 18), "UTF-8");
+        if(header.equals("P2PFILESHARINGPROJ")) {
+            throw new Exception("wrong handshake header: " + header);
+        }
+        peerId = ByteBuffer.wrap(Arrays.copyOfRange(bytes, 28, 32)).getInt();
     }
 
     public byte[] toByteArray(int peerId) {
@@ -19,5 +30,9 @@ public class HandshakeMessage implements Message{
             System.out.println("writing handshake message error");
         }
         return bytes.toByteArray();
+    }
+
+    public int getPeerId() {
+        return peerId;
     }
 }

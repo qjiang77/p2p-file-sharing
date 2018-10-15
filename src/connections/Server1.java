@@ -1,10 +1,12 @@
+package connections;
+
 import java.net.*;
 import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
 import java.util.*;
 
-public class Server {
+public class Server1 {
 
     private static final int sPort = 8000;   //The server will be listening on this port number
 
@@ -15,7 +17,7 @@ public class Server {
         try {
             while (true) {
                 new Handler(listener.accept(), clientNum).start();
-                System.out.println("Client " + clientNum + " is connected!");
+                System.out.println("connections.Client " + clientNum + " is connected!");
                 clientNum++;
             }
         } finally {
@@ -41,6 +43,7 @@ public class Server {
             this.no = no;
         }
 
+        @Override
         public void run() {
             try {
                 //initialize Input and Output streams
@@ -62,7 +65,7 @@ public class Server {
                     System.err.println("Data received in unknown format");
                 }
             } catch (IOException ioException) {
-                System.out.println("Disconnect with Client " + no);
+                System.out.println("Disconnect with connections.Client " + no);
             } finally {
                 //Close connections
                 try {
@@ -70,7 +73,7 @@ public class Server {
                     out.close();
                     connection.close();
                 } catch (IOException ioException) {
-                    System.out.println("Disconnect with Client " + no);
+                    System.out.println("Disconnect with connections.Client " + no);
                 }
             }
         }
@@ -80,7 +83,7 @@ public class Server {
             try {
                 out.writeObject(msg);
                 out.flush();
-                System.out.println("Send message: " + msg + " to Client " + no);
+                System.out.println("Send message: " + msg + " to connections.Client " + no);
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }

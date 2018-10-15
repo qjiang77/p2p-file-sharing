@@ -9,7 +9,7 @@ public class Peer {
     private Vector<PeerInfo> neighborPeerInfo;
 
     Peer() {
-        BufferedReader input = new BufferedReader(new FileReader("configs.PeerInfo.cfg"));
+        BufferedReader input = new BufferedReader(new FileReader("PeerInfo.cfg"));
     }
 
     public PeerInfo getPeerInfo() {

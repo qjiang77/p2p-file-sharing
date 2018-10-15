@@ -1,3 +1,5 @@
+package connections;
+
 import configs.PeerInfo;
 import messages.HandshakeMessage;
 
