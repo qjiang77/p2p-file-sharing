@@ -5,6 +5,7 @@ import messages.HandshakeMessage;
 
 import java.net.*;
 import java.io.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Client {
 	Socket requestSocket;           //socket connect to the server
@@ -12,9 +13,13 @@ public class Client {
  	DataInputStream in;          //stream read from the socket
 	byte[] send;                //message send to the server
 	byte[] receive;                //capitalized message read from the server
+	int peerId;
 
-	public void Client(PeerInfo info) {
+	private ConcurrentLinkedQueue<byte[]> messageQueue;
 
+	public Client(int peerId) {
+		this.peerId = peerId;
+		this.messageQueue = new ConcurrentLinkedQueue<>();
 	}
 
 	void run()
@@ -84,12 +89,6 @@ public class Client {
 		catch(IOException ioException){
 			ioException.printStackTrace();
 		}
-	}
-	//main method
-	public static void main(String args[])
-	{
-		Client client = new Client();
-		client.run();
 	}
 
 }
