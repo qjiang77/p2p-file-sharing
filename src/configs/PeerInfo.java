@@ -5,6 +5,10 @@ public class PeerInfo {
 	private String peerAddress;
 	private int peerPort;
 	private boolean hasFile;
+
+	public PeerInfo(int pId) {
+		this.peerId = pId;
+	}
 	
 	public PeerInfo(int pId, String pAddress, int pPort, boolean hasFile) {
 		this.peerId = pId;
@@ -25,7 +29,7 @@ public class PeerInfo {
 		return peerPort;
 	}
 
-	public boolean isHasFile() {
+	public boolean hasFile() {
 		return hasFile;
 	}
 }

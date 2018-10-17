@@ -1,22 +1,22 @@
+import configs.CommonInfo;
 import configs.PeerInfo;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.Vector;
+import java.util.BitSet;
+import java.util.List;
 
 public class Peer {
     private PeerInfo peerInfo;
-    private Vector<PeerInfo> neighborPeerInfo;
+    private CommonInfo commonInfo;
+    private List<PeerInfo> peerList;
 
-    Peer() {
-        BufferedReader input = new BufferedReader(new FileReader("PeerInfo.cfg"));
+    private BitSet;
+
+    Peer(int peerId, CommonInfo commonInfo) {
+        this.peerInfo = new PeerInfo(peerId);
+        this.commonInfo = commonInfo;
     }
 
-    public PeerInfo getPeerInfo() {
-        return PeerInfo;
-    }
+    public void start(List<PeerInfo> peerList) {
 
-    public Vector<PeerInfo> getNeighborPeerInfo() {
-        return neighborPeerInfo;
     }
 }
