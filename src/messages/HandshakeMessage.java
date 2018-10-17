@@ -8,6 +8,10 @@ public class HandshakeMessage implements Message{
 
     private int peerId;
 
+    public HandshakeMessage(int peerId) {
+        this.peerId = peerId;
+    }
+
     HandshakeMessage(byte[] bytes) throws Exception {
         if(bytes.length != 32) {
             throw new Exception("invalid handshake message length");
@@ -19,7 +23,7 @@ public class HandshakeMessage implements Message{
         peerId = ByteBuffer.wrap(Arrays.copyOfRange(bytes, 28, 32)).getInt();
     }
 
-    public byte[] toByteArray(int peerId) {
+    public byte[] toByteArray() {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         String header = "P2PFILESHARINGPROJ";
         try {

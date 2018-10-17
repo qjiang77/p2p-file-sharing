@@ -1,94 +1,59 @@
 package connections;
 
 import configs.PeerInfo;
+import messages.ActualMessage;
 import messages.HandshakeMessage;
 
 import java.net.*;
 import java.io.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class Client {
-	Socket requestSocket;           //socket connect to the server
-	DataOutputStream out;         //stream write to the socket
- 	DataInputStream in;          //stream read from the socket
-	byte[] send;                //message send to the server
-	byte[] receive;                //capitalized message read from the server
-	int peerId;
+public class Client extends Thread{
+    Socket socket;
+    DataOutputStream out;
+    PeerInfo peerInfo;
 
-	private ConcurrentLinkedQueue<byte[]> messageQueue;
+    private ConcurrentLinkedQueue<ActualMessage> messageQueue;
 
-	public Client(int peerId) {
-		this.peerId = peerId;
-		this.messageQueue = new ConcurrentLinkedQueue<>();
-	}
+    public Client(PeerInfo info) {
+        this.peerInfo = info;
+        this.messageQueue = new ConcurrentLinkedQueue<>();
+    }
 
-	void run()
-	{
-		try{
-			//create a socket to connect to the server
-			requestSocket = new Socket("localhost", 8000);
-			System.out.println("Connected to localhost in port 8000");
-			//initialize inputStream and outputStream
-			out = new DataOutputStream(requestSocket.getOutputStream());
-			out.flush();
-			in = new DataInputStream(requestSocket.getInputStream());
-			
-			//get Input from standard input
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+    @Override
+    public void run() {
+        try {
+            //create a socket to connect to the server
+            socket = new Socket(peerInfo.getPeerAddress(), peerInfo.getPeerPort());
+            out = new DataOutputStream(socket.getOutputStream());
 
-			// send handshake message
-			HandshakeMessage hsMsg = new HandshakeMessage();
-			send = HandshakeMessage.
+            // send handshake message
+            HandshakeMessage hsMsg = new HandshakeMessage(peerInfo.getPeerId());
+            out.write(hsMsg.toByteArray());
+            out.flush();
 
-			while(true)
-			{
-				System.out.print("Hello, please input a sentence: ");
-				//read a sentence from the standard input
-				send = bufferedReader.readLine();
-				//Send the sentence to the server
-				sendMessage(message);
-				//Receive the upperCase sentence from the server
-				receive = (String)in.readObject();
+            while (true) {
+                while(!messageQueue.isEmpty()) {
+                    out.write(messageQueue.poll().toByteArray());
+                    out.flush();
+                }
+            }
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+    }
 
-				//show the message to the user
-				System.out.println("Receive message: " + MESSAGE);
-			}
-		}
-		catch (ConnectException e) {
-    			System.err.println("Connection refused. You need to initiate a server first.");
-		} 
-		catch ( ClassNotFoundException e ) {
-            		System.err.println("Class not found");
-        	} 
-		catch(UnknownHostException unknownHost){
-			System.err.println("You are trying to connect to an unknown host!");
-		}
-		catch(IOException ioException){
-			ioException.printStackTrace();
-		}
-		finally{
-			//Close connections
-			try{
-				in.close();
-				out.close();
-				requestSocket.close();
-			}
-			catch(IOException ioException){
-				ioException.printStackTrace();
-			}
-		}
-	}
-	//send a message to the output stream
-	void sendMessage(String msg)
-	{
-		try{
-			//stream write the message
-			out.writeObject(msg);
-			out.flush();
-		}
-		catch(IOException ioException){
-			ioException.printStackTrace();
-		}
-	}
+    public void closeClient() {
+        try {
+            out.close();
+            socket.close();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+    }
+    //send a message to the output stream
+    void sendMessage(ActualMessage msg) {
+        messageQueue.add(msg);
+    }
 
 }
