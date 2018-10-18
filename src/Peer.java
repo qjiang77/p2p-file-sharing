@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 public class Peer {
-    private PeerInfo peerInfo;
+    private int id;
     private CommonInfo commonInfo;
     private Map<Integer, PeerInfo> peerMap;
 
     Peer(int peerId, CommonInfo commonInfo) {
-        this.peerInfo = new PeerInfo(peerId);
+        this.id = peerId;
         this.commonInfo = commonInfo;
 
         // init bit field
@@ -25,7 +25,7 @@ public class Peer {
         }
 
         // load this peer config
-        
+
 
     }
 }
