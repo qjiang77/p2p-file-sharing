@@ -9,7 +9,7 @@ public class Peer {
     private CommonInfo commonInfo;
     private List<PeerInfo> peerList;
 
-    private BitSet;
+
 
     Peer(int peerId, CommonInfo commonInfo) {
         this.peerInfo = new PeerInfo(peerId);
