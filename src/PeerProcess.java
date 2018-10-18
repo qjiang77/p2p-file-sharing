@@ -1,7 +1,8 @@
+import configs.CommonConfigReader;
 import configs.CommonInfo;
+import configs.PeerConfigReader;
 import configs.PeerInfo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PeerProcess {
@@ -9,10 +10,14 @@ public class PeerProcess {
         if(args == null || args.length == 0) {
             System.out.println("expect argument peer ID");
         }
-        CommonInfo commonInfo = new CommonInfo("Common.cfg");
-        List<PeerInfo> peerList = new ArrayList<>();
-        int peerId = Integer.parseInt(args[0]);
+        CommonInfo commonInfo = CommonConfigReader.readCommonConfig("Common.cfg");
+        List<PeerInfo> peerList = PeerConfigReader.readPeerComfig("PeerInfo.cfg");
+        int peerId = Integer.parseInt(args[0]);;
         Peer peer = new Peer(peerId, commonInfo);
-        peer.start(peerList);
+        try {
+            peer.start(peerList);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

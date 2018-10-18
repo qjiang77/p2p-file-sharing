@@ -1,6 +1,7 @@
 package configs;
 
 public class PeerInfo {
+
 	private int peerId;
 	private String peerAddress;
 	private int peerPort;
@@ -31,5 +32,17 @@ public class PeerInfo {
 
 	public boolean hasFile() {
 		return hasFile;
+	}
+
+	public void setPeerAddress(String peerAddress) {
+		this.peerAddress = peerAddress;
+	}
+
+	public void setPeerPort(int peerPort) {
+		this.peerPort = peerPort;
+	}
+
+	public void setHasFile(boolean hasFile) {
+		this.hasFile = hasFile;
 	}
 }
