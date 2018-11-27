@@ -19,6 +19,7 @@ public class FileHandler {
     }
 
     public void createFile(int peerID) {
+        createSubdir(peerID);
         String filename = "peer_" + peerID + "/TheFile";
         File file = new File(filename);
 
