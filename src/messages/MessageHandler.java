@@ -1,21 +1,9 @@
 package messages;
 
-public class MessageHandler {
-    public void handleHandShakeMessage(byte[] bytes) {
-        try {
-            HandshakeMessage hsm = new HandshakeMessage(bytes);
-            int PeerId = hsm.getPeerId();
-        } catch (Exception e) {
-            System.out.println("handshake message error: " + e);
-        }
-    }
+public interface MessageHandler {
+    // return the peer id
+    int handleHandShakeMessage(byte[] bytes);
+    // return the response message
+    void handleActualMessage(byte[] bytes, int peerId);
 
-    public void handleActualMessage(byte[] bytes) {
-        try {
-            ActualMessage am = new ActualMessage(bytes);
-
-        } catch (Exception e) {
-            System.out.println("actual message error: " + e);
-        }
-    }
 }

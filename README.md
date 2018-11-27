@@ -1,2 +1,7 @@
 # p2p-file-sharing
-simulating BitTorrent
+
+group members
+
+Qi Jiang
+Yiqi Peng
+Jiangchuan Hu

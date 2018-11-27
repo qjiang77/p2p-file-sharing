@@ -12,7 +12,8 @@ public class HandshakeMessage implements Message{
         this.peerId = peerId;
     }
 
-    HandshakeMessage(byte[] bytes) throws Exception {
+    // byte -> msg
+    public HandshakeMessage(byte[] bytes) throws Exception {
         if(bytes.length != 32) {
             throw new Exception("invalid handshake message length");
         }
