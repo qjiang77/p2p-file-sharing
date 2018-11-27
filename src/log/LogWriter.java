@@ -8,7 +8,7 @@ import java.util.Date;
 
 public class LogWriter {
     // Create log: filename = 'log_peer_[peerID].log'
-    public void createLogFile(String peerID) {
+    public void createLogFile(int peerID) {
         String filename = "log_peer_" + peerID + ".log";
         File file = new File(filename);
 
@@ -32,7 +32,7 @@ public class LogWriter {
         return (date.toString());
     }
 
-    public void tcpConnectionTo(String peer_id_1, String peer_id_2) {
+    public void tcpConnectionTo(int peer_id_1, int peer_id_2) {
         String filename = "log_peer_" + peer_id_1 + ".log";
         File file = new File(filename);
         if(!file.exists()) {
@@ -50,7 +50,7 @@ public class LogWriter {
         }
     }
 
-    public void tcpConnectionFrom(String peer_id_1, String peer_id_2) {
+    public void tcpConnectionFrom(int peer_id_1, int peer_id_2) {
         String filename = "log_peer_" + peer_id_1 + ".log";
         File file = new File(filename);
         if(!file.exists()) {
@@ -68,7 +68,7 @@ public class LogWriter {
         }
     }
 
-    public void changePreferredNeighbors(String peer_id, String[] neighbors_list) {
+    public void changePreferredNeighbors(int peer_id, int[] neighbors_list) {
         String filename = "log_peer_" + peer_id + ".log";
         File file = new File(filename);
         if(!file.exists()) {
@@ -90,7 +90,7 @@ public class LogWriter {
         }
     }
 
-    public void changeOptimisticallyUnchockedNeighbor(String peer_id, String opt_neighbor_id) {
+    public void changeOptimisticallyUnchockedNeighbor(int peer_id, int opt_neighbor_id) {
         String filename = "log_peer_" + peer_id + ".log";
         File file = new File(filename);
         if(!file.exists()) {
@@ -108,7 +108,7 @@ public class LogWriter {
         }
     }
 
-    public void unchoking(String peer_id_1, String peer_id_2) {
+    public void unchoking(int peer_id_1, int peer_id_2) {
         String filename = "log_peer_" + peer_id_1 + ".log";
         File file = new File(filename);
         if(!file.exists()) {
@@ -126,7 +126,7 @@ public class LogWriter {
         }
     }
 
-    public void choking(String peer_id_1, String peer_id_2) {
+    public void choking(int peer_id_1, int peer_id_2) {
         String filename = "log_peer_" + peer_id_1 + ".log";
         File file = new File(filename);
         if(!file.exists()) {
@@ -144,7 +144,7 @@ public class LogWriter {
         }
     }
 
-    public void receiveHaveMessage(String peer_id_1, String peer_id_2, String index) {
+    public void receiveHaveMessage(int peer_id_1, int peer_id_2, int index) {
         String filename = "log_peer_" + peer_id_1 + ".log";
         File file = new File(filename);
         if(!file.exists()) {
@@ -162,7 +162,7 @@ public class LogWriter {
         }
     }
 
-    public void receiveInterestedMessage(String peer_id_1, String peer_id_2) {
+    public void receiveInterestedMessage(int peer_id_1, int peer_id_2) {
         String filename = "log_peer_" + peer_id_1 + ".log";
         File file = new File(filename);
         if(!file.exists()) {
@@ -180,7 +180,7 @@ public class LogWriter {
         }
     }
 
-    public void receiveNotInterestedMessage(String peer_id_1, String peer_id_2) {
+    public void receiveNotInterestedMessage(int peer_id_1, int peer_id_2) {
         String filename = "log_peer_" + peer_id_1 + ".log";
         File file = new File(filename);
         if(!file.exists()) {
@@ -198,7 +198,7 @@ public class LogWriter {
         }
     }
 
-    public void downloadPiece(String peer_id_1, String peer_id_2, String index, int piece_num) {
+    public void downloadPiece(int peer_id_1, int peer_id_2, int index, int piece_num) {
         String filename = "log_peer_" + peer_id_1 + ".log";
         File file = new File(filename);
         if(!file.exists()) {
@@ -216,7 +216,7 @@ public class LogWriter {
         }
     }
 
-    public void completionOfDownload(String peer_id) {
+    public void completionOfDownload(int peer_id) {
         String filename = "log_peer_" + peer_id + ".log";
         File file = new File(filename);
         if(!file.exists()) {
