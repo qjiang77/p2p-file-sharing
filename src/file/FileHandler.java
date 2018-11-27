@@ -10,7 +10,7 @@ public class FileHandler {
     public FileHandler(CommonInfo commonInfo){
         this.commonInfo = commonInfo;
     }
-    public void createSubdir(String peerID) {
+    public void createSubdir(int peerID) {
         String dirName = "peer_" + peerID;
         File dir = new File(dirName);
         if(!dir.exists()) {
@@ -18,7 +18,7 @@ public class FileHandler {
         }
     }
 
-    public void createFile(String peerID) {
+    public void createFile(int peerID) {
         String filename = "peer_" + peerID + "/TheFile";
         File file = new File(filename);
 
@@ -32,7 +32,7 @@ public class FileHandler {
     }
 
 
-    public byte[] readPiece(int pieceIndex, String readFromID) throws IOException {
+    public byte[] readPiece(int pieceIndex, int readFromID) throws IOException {
         String filename = "peer_" + readFromID + "/TheFile";
         File myFile = new File(filename);
         if(!myFile.exists()) {
@@ -58,7 +58,7 @@ public class FileHandler {
     }
 
 
-    public void writePiece(int pieceIndex, String writeToID, byte[] pieceData) throws IOException {
+    public void writePiece(int pieceIndex, int writeToID, byte[] pieceData) throws IOException {
         String filename = "peer_" + writeToID + "/TheFile";
         File myFile = new File(filename);
         if(!myFile.exists()) {
