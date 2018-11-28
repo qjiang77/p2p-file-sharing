@@ -234,4 +234,8 @@ public class Peer implements MessageHandler{
         return new ActualMessage(ActualMessage.TYPE.REQUEST, );
     }
 
+    public int getRandomSelectPiece(int peerId1, int peerId2) {
+
+    }
+
 }
