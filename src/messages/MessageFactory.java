@@ -1,6 +1,7 @@
 package messages;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Vector;
 
 public class MessageFactory {
 
@@ -19,4 +20,14 @@ public class MessageFactory {
         return new ActualMessage(3, null);
     }
 
+    public static ActualMessage pieceMessage(byte[] payload) {return new ActualMessage(7, payload);}
+
+    public static ActualMessage bitfieldMessage(boolean[] bitfield) {
+        byte[] bytes = new byte[(bitfield.length + 7) / 8];
+        for(int i = 0; i < bitfield.length; ++i) {
+            bytes[i / 8] *= 2;
+            bytes[i / 8] += bitfield[i] ? 1 : 0;
+        }
+        return new ActualMessage(5, bytes);
+    }
 }

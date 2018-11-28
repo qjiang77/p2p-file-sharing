@@ -25,7 +25,6 @@ public class ActualMessage {
         this.payload = payload;
     }
 
-    // message 加工处理还有问题
     public byte[] toByteArray() {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
