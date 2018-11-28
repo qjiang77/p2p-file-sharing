@@ -83,7 +83,7 @@ public class Peer implements MessageHandler{
                         }
                         while (nextPreferredNeighbors.size() < commonInfo.getNumberOfPreferredNeighbors()) {
                             if (tempOfInterest.isEmpty()) {break;}
-                            int randomIndex = new Random().nextInt(tempOfInterest.size());
+                            int randomIndex = new Random().nextInt(interested.size());
                             nextPreferredNeighbors.add(tempOfInterest.get(randomIndex));
                             tempOfInterest.remove(randomIndex);
                         }
@@ -131,7 +131,39 @@ public class Peer implements MessageHandler{
         getOptiUnchokedPeersTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-
+                Integer newOptimisticallyUnchokedNeighbor = -1;
+                if (interested.size() > 0) {
+                    while (true) {
+                        if (interested.isEmpty()) {
+                            break;
+                        }
+                        int randomIndex = new Random().nextInt(interested.size());
+                        Iterator<Integer> iterator = interested.iterator();
+                        for(int i = 0; i <= randomIndex; ++i) {
+                            newOptimisticallyUnchokedNeighbor = iterator.next();
+                        }
+                        if (newOptimisticallyUnchokedNeighbor != optimisticallyUnchockedNeighbor &&
+                                !preferredNeighbors.contains(newOptimisticallyUnchokedNeighbor)) {
+                            break;
+                        }
+                    }
+                }
+                try {
+                    clients.get(newOptimisticallyUnchokedNeighbor);
+                    // TODO send unchoke
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (!preferredNeighbors.contains(optimisticallyUnchockedNeighbor)) {
+                    try {
+                        clients.get(optimisticallyUnchockedNeighbor);
+                        // TODO send choke
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                optimisticallyUnchockedNeighbor = newOptimisticallyUnchokedNeighbor;
+                // TODO log writer
             }
         }, 0, 1000 * commonInfo.getOptimisticUnchokingInterval());
     }
@@ -187,6 +219,7 @@ public class Peer implements MessageHandler{
 
     private ActualMessage handleChockMessage(byte[] payload, int peerId) {
         //logger
+        // TODO check request map
         return null;
     }
 
@@ -241,8 +274,8 @@ public class Peer implements MessageHandler{
         if(missingPieceSize == 0) {
             return null;
         }
-        int pieceIndex = new Random().nextInt(missingPieceSize);
-        return MessageFactory.requestMessage(pieceIndex);
+        int i = new Random().nextInt(missingPieceSize);
+        return MessageFactory.requestMessage(index.get(i));
     }
 
 }
