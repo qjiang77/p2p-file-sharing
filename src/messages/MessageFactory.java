@@ -21,7 +21,7 @@ public class MessageFactory {
     }
 
     public static ActualMessage pieceMessage(byte[] payload) {return new ActualMessage(7, payload);}
-
+    
     public static ActualMessage bitfieldMessage(boolean[] bitfield) {
         byte[] bytes = new byte[(bitfield.length + 7) / 8];
         for(int i = 0; i < bitfield.length; ++i) {
