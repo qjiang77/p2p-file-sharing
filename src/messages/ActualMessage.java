@@ -14,7 +14,6 @@ public class ActualMessage {
     public int getType() {
         return type;
     }
-
     public byte[] getPayload() {
         return payload;
     }
@@ -22,6 +21,10 @@ public class ActualMessage {
     public ActualMessage(byte[] bytes) {
         type = ByteBuffer.wrap(Arrays.copyOfRange(bytes, 0, 1)).getInt();
         payload = Arrays.copyOfRange(bytes, 0, 1);
+    }
+
+    public ActualMessage makeMessage(TYPE, payload) {
+
     }
 
     // message 加工处理还有问题

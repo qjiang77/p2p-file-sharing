@@ -231,7 +231,7 @@ public class Peer implements MessageHandler{
             return null;
         }
         int pieceIndex = new Random().nextInt(missingPieceSize);
-        return new ActualMessage(ActualMessage.TYPE.REQUEST, );
+        return new ActualMessage.makeMessage(ActualMessage.TYPE.REQUEST, pieceIndex);
     }
 
 }
