@@ -5,9 +5,6 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class ActualMessage {
-    public enum TYPE {
-        CHOCK, UNCHOCK, INTERESTED, UNINTERESTED, HAVE, BITFIELD, REQUEST, PIECE
-    }
     int type;
     byte[] payload;
 
@@ -23,8 +20,9 @@ public class ActualMessage {
         payload = Arrays.copyOfRange(bytes, 0, 1);
     }
 
-    public ActualMessage makeMessage(TYPE, payload) {
-
+    ActualMessage (int type, byte[] payload) {
+        this.type = type;
+        this.payload = payload;
     }
 
     // message 加工处理还有问题

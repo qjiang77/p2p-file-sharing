@@ -31,15 +31,13 @@ public class ServerConnection extends Thread {
             // if skip, should add while(true) here, waiting for handshake message
             in = new DataInputStream(connection.getInputStream());
             int peerId = -1;
-            while(peerId == -1) {
-                try {
-                    byte[] bytes = new byte[32];
-                    in.readFully(bytes);
-                    peerId = messageHandler.handleHandShakeMessage(bytes);
+            try {
+                byte[] bytes = new byte[32];
+                in.readFully(bytes);
+                peerId = messageHandler.handleHandShakeMessage(bytes);
 //                logWriter do sth
-                } catch (Exception e) {
-                    System.out.println("illegal handshake message. " + e);
-                }
+            } catch (Exception e) {
+                System.out.println("illegal handshake message. " + e);
             }
             try {
                 while(true) {
