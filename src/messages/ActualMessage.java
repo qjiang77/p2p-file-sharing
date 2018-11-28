@@ -4,7 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-public class ActualMessage implements Message{
+public class ActualMessage {
+    public enum TYPE {
+        CHOCK, UNCHOCK, INTERESTED, UNINTERESTED, HAVE, BITFIELD, REQUEST, PIECE
+    }
     int type;
     byte[] payload;
 

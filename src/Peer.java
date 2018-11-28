@@ -8,33 +8,25 @@ import messages.HandshakeMessage;
 import messages.MessageHandler;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Peer implements MessageHandler{
     private int myId;
     private CommonInfo commonInfo;
     private PeerInfo myPeerInfo;
-    private BitField myBitField;
+    private boolean[] myBitField;
     private Server server;
 
     private int optimisticallyUnchockedNeighbor;
     private Map<Integer, Client> clients;
-    private Set<Integer> interested;
-    private Map<Integer, BitField> bitSetMap;
+    private Vector<Integer> interested;
+    private Map<Integer, boolean[]> bitSetMap;
     private Map<Integer, PeerInfo> peerInfoMap;
-    private Map<Integer, Integer> downloadRate;
+    private ConcurrentHashMap<Integer, Integer> downloadRateMap;
 
+    private Vector<Integer> preferredNeighbors;
 
     private LogWriter logWriter;
-
-    class BitField {
-        boolean[] bits;
-        Set<Integer> index;
-
-        BitField(int size) {
-            bits = new boolean[size];
-            index = new HashSet<>();
-        }
-    }
 
     Peer(int peerId, CommonInfo commonInfo) {
         this.myId = peerId;
@@ -43,10 +35,10 @@ public class Peer implements MessageHandler{
         // init bit field
 
         this.clients = new HashMap<>();
-        this.interested = new HashSet<>();
+        this.interested = new Vector<>();
         this.bitSetMap = new HashMap<>();
         this.peerInfoMap = new HashMap<>();
-        this.downloadRate = new HashMap<>();
+        this.downloadRateMap = new ConcurrentHashMap<>();
     }
 
     public void start(List<PeerInfo> peerList) throws Exception {
@@ -72,6 +64,71 @@ public class Peer implements MessageHandler{
             }
         }
 
+    }
+
+    private void getPreferredPeers() {
+        Timer getPereferPeersTimer = new Timer();
+        getPereferPeersTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Vector<Integer> nextPreferredNeighbors = new Vector<>();
+                if (myPeerInfo.hasFile()) {
+                    preferredNeighbors.clear();
+                    if (interested.size() > 0) {
+                        Vector<Integer> tempOfInterest = interested;
+                        while (nextPreferredNeighbors.size() < commonInfo.getNumberOfPreferredNeighbors()) {
+                            if (tempOfInterest.isEmpty()) {break;}
+                            int randomIndex = new Random().nextInt(tempOfInterest.size());
+                            nextPreferredNeighbors.add(tempOfInterest.get(randomIndex));
+                            tempOfInterest.remove(randomIndex);
+                        }
+                    }
+                } else {
+                    if (!downloadRateMap.isEmpty()) {
+                        List<Map.Entry<Integer, Integer>> list = new ArrayList<>(downloadRateMap.entrySet());
+                        list.sort(Map.Entry.comparingByValue());
+                        for (Map.Entry<Integer, Integer> entry : list) {
+                            nextPreferredNeighbors.add(entry.getKey());
+                            if (nextPreferredNeighbors.size() >= commonInfo.getNumberOfPreferredNeighbors()) break;;
+                        }
+                        downloadRateMap.clear();
+                    }
+                }
+                for (Integer newPreferredNeighbor : nextPreferredNeighbors) {
+                    if (!preferredNeighbors.contains(newPreferredNeighbor)) {
+                        // new comer
+                        try {
+                            clients.get(newPreferredNeighbor).start();
+                            // TODO send unchoke message to that neighbor
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                for (Integer oldPreferredNeighbor : preferredNeighbors) {
+                    if (!nextPreferredNeighbors.contains(oldPreferredNeighbor)) {
+                        try {
+                            clients.get(oldPreferredNeighbor).start();
+                            // TODO send choke message to that neighbor
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                preferredNeighbors = nextPreferredNeighbors;
+//                logWriter.changePreferredNeighbors(myPeerInfo.getPeerId(), preferredNeighbors);
+            }
+        }, 0, 1000 * commonInfo.getUnchokingInterval());
+    }
+    private void getOptiUnchokedPeers() {
+        Timer getOptiUnchokedPeersTimer = new Timer();
+        getOptiUnchokedPeersTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+
+            }
+        }, 0, 1000 * commonInfo.getOptimisticUnchokingInterval());
     }
 
     public int handleHandShakeMessage(byte[] bytes) {
@@ -163,12 +220,18 @@ public class Peer implements MessageHandler{
     }
 
     public ActualMessage requestPiece(int peerId) {
-        int missingPieceSize = myBitField.index.size();
+        List<Integer> index = new ArrayList<>();
+        for(int i = 0; i < myBitField.length; ++i) {
+            if(!myBitField[i]) {
+                index.add(i);
+            }
+        }
+        int missingPieceSize = index.size();
         if(missingPieceSize == 0) {
             return null;
         }
-        int pieceIndex = new Random().nextInt();
-        ActualMessage requestMessage = new ActualMessage();
+        int pieceIndex = new Random().nextInt(missingPieceSize);
+        return new ActualMessage(ActualMessage.TYPE.REQUEST, );
     }
 
 }
