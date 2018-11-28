@@ -5,16 +5,12 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class ActualMessage {
-    public enum TYPE {
-        CHOCK, UNCHOCK, INTERESTED, UNINTERESTED, HAVE, BITFIELD, REQUEST, PIECE
-    }
     int type;
     byte[] payload;
 
     public int getType() {
         return type;
     }
-
     public byte[] getPayload() {
         return payload;
     }
@@ -22,6 +18,11 @@ public class ActualMessage {
     public ActualMessage(byte[] bytes) {
         type = ByteBuffer.wrap(Arrays.copyOfRange(bytes, 0, 1)).getInt();
         payload = Arrays.copyOfRange(bytes, 0, 1);
+    }
+
+    ActualMessage (int type, byte[] payload) {
+        this.type = type;
+        this.payload = payload;
     }
 
     // message 加工处理还有问题

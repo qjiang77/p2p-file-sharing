@@ -5,8 +5,10 @@ import connections.Server;
 import log.LogWriter;
 import messages.ActualMessage;
 import messages.HandshakeMessage;
+import messages.MessageFactory;
 import messages.MessageHandler;
 
+import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,8 +21,8 @@ public class Peer implements MessageHandler{
 
     private int optimisticallyUnchockedNeighbor;
     private Map<Integer, Client> clients;
-    private Vector<Integer> interested;
-    private Map<Integer, boolean[]> bitSetMap;
+    private Set<Integer> interested;
+    private Map<Integer, boolean[]> bitMap;
     private Map<Integer, PeerInfo> peerInfoMap;
     private ConcurrentHashMap<Integer, Integer> downloadRateMap;
 
@@ -35,8 +37,8 @@ public class Peer implements MessageHandler{
         // init bit field
 
         this.clients = new HashMap<>();
-        this.interested = new Vector<>();
-        this.bitSetMap = new HashMap<>();
+        this.interested = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
+        this.bitMap = new HashMap<>();
         this.peerInfoMap = new HashMap<>();
         this.downloadRateMap = new ConcurrentHashMap<>();
     }
@@ -75,7 +77,10 @@ public class Peer implements MessageHandler{
                 if (myPeerInfo.hasFile()) {
                     preferredNeighbors.clear();
                     if (interested.size() > 0) {
-                        Vector<Integer> tempOfInterest = interested;
+                        Vector<Integer> tempOfInterest = new Vector<>();
+                        for(int interest : interested) {
+                            tempOfInterest.add(interest);
+                        }
                         while (nextPreferredNeighbors.size() < commonInfo.getNumberOfPreferredNeighbors()) {
                             if (tempOfInterest.isEmpty()) {break;}
                             int randomIndex = new Random().nextInt(tempOfInterest.size());
@@ -154,10 +159,10 @@ public class Peer implements MessageHandler{
                     respMessage = handleUnchockMessage(am.getPayload(), peerId);
                     break;
                 case 2:
-                    respMessage = handleInterestMessage(am.getPayload(), peerId);
+                    respMessage = handleInterestedMessage(am.getPayload(), peerId);
                     break;
                 case 3:
-                    respMessage = handleUnInterestMessage(am.getPayload(), peerId);
+                    respMessage = handleUnInterestedMessage(am.getPayload(), peerId);
                     break;
                 case 4:
                     respMessage = handleHaveMessage(am.getPayload(), peerId);
@@ -180,46 +185,52 @@ public class Peer implements MessageHandler{
         }
     }
 
-    public ActualMessage handleChockMessage(byte[] payload, int peerId) {
+    private ActualMessage handleChockMessage(byte[] payload, int peerId) {
         //logger
         return null;
     }
 
-    public ActualMessage handleUnchockMessage(byte[] payload, int peerId) {
+    private ActualMessage handleUnchockMessage(byte[] payload, int peerId) {
         // logger
         return requestPiece(peerId);
     }
 
-    public ActualMessage handleInterestMessage(byte[] payload, int peerId) {
+    private ActualMessage handleInterestedMessage(byte[] payload, int peerId) {
 //        logWriter.receiveInterestedMessage(myId, peerId);
         interested.add(peerId);
         return null;
     }
 
-    public ActualMessage handleUnInterestMessage(byte[] payload, int peerId) {
+    private ActualMessage handleUnInterestedMessage(byte[] payload, int peerId) {
         if(interested.contains(peerId)) {
             interested.remove(peerId);
         }
         return null;
     }
 
-    public ActualMessage handleHaveMessage(byte[] payload, int peerId) {
+    private ActualMessage handleHaveMessage(byte[] payload, int peerId) {
+        int index = ByteBuffer.wrap(payload).getInt();
+        if(!myBitField[index]) {
+            interested.add(peerId);
+            bitMap.get(peerId)[index] = true;
+            return MessageFactory.interestedMessage();
+        }
+        return null;
+    }
+
+    private ActualMessage handleBitfieldMessage(byte[] payload, int peerId) {
 
     }
 
-    public ActualMessage handleBitfieldMessage(byte[] payload, int peerId) {
+    private ActualMessage handleRequestMessage(byte[] payload, int peerId) {
 
     }
 
-    public ActualMessage handleRequestMessage(byte[] payload, int peerId) {
-
+    private ActualMessage handlePieceMessage(byte[] payload, int peerId) {
+        // finally should send not interested to some nodes
     }
 
-    public ActualMessage handlePieceMessage(byte[] payload, int peerId) {
-
-    }
-
-    public ActualMessage requestPiece(int peerId) {
+    private ActualMessage requestPiece(int peerId) {
         List<Integer> index = new ArrayList<>();
         for(int i = 0; i < myBitField.length; ++i) {
             if(!myBitField[i]) {
@@ -231,7 +242,7 @@ public class Peer implements MessageHandler{
             return null;
         }
         int pieceIndex = new Random().nextInt(missingPieceSize);
-        return new ActualMessage(ActualMessage.TYPE.REQUEST, );
+        return MessageFactory.requestMessage(pieceIndex);
     }
 
     public int getRandomSelectPiece(int peerId1, int peerId2) {
