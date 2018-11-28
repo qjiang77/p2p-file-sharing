@@ -41,6 +41,8 @@ public class Peer implements MessageHandler{
         this.bitMap = new HashMap<>();
         this.peerInfoMap = new HashMap<>();
         this.downloadRateMap = new ConcurrentHashMap<>();
+
+        this.myBitField = new boolean[commonInfo.getFileSize() / commonInfo.getPieceSize() + 1];
     }
 
     public void start(List<PeerInfo> peerList) throws Exception {
@@ -176,7 +178,17 @@ public class Peer implements MessageHandler{
         } catch (Exception e) {
             System.out.println("handshake message error: " + e);
         }
+        if(!allFalse(myBitField)) {
+            MessageFactory.bitfieldMessage(myBitField);
+        }
         return peerId;
+    }
+
+    private boolean allFalse(boolean[] bitfield) {
+        for(boolean b : bitfield) {
+            if(b) return false;
+        }
+        return true;
     }
 
     public void handleActualMessage(byte[] bytes, int peerId) {
@@ -212,8 +224,8 @@ public class Peer implements MessageHandler{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if(respMessage == null) {
-
+        if(respMessage != null) {
+            clients.get(peerId).sendMessage(respMessage);
         }
     }
 
@@ -243,16 +255,32 @@ public class Peer implements MessageHandler{
 
     private ActualMessage handleHaveMessage(byte[] payload, int peerId) {
         int index = ByteBuffer.wrap(payload).getInt();
+        bitMap.get(peerId)[index] = true;
         if(!myBitField[index]) {
-            interested.add(peerId);
-            bitMap.get(peerId)[index] = true;
             return MessageFactory.interestedMessage();
         }
         return null;
     }
 
     private ActualMessage handleBitfieldMessage(byte[] payload, int peerId) {
+        bitMap.put(peerId, new boolean[commonInfo.getFileSize()/commonInfo.getPieceSize() + 1]);
+        boolean interestFlag = false;
+        for (int i = 0; i < payload.length; i++) {
+            byte[] array = new byte[8];
+            for (int k = 7; k >= 0; k--) {
+                array[k] = (byte)(payload[i] & 1);
+                payload[i] = (byte) (payload[i] >> 1);
+            }
 
+            for (int j = 0; j < 8; j++) {
+                if (array[j] == 1) {
+                    bitMap.get(peerId)[i * 8 + j] = true;
+                    if (!myBitField[i * 8 + j]) interestFlag = true;
+                }
+            }
+        }
+        if (interestFlag) return MessageFactory.interestedMessage();
+        return null;
     }
 
     private ActualMessage handleRequestMessage(byte[] payload, int peerId) {

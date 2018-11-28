@@ -25,7 +25,6 @@ public class Client extends Thread{
         try {
             //create a socket to connect to the server
             socket = new Socket(peerInfo.getPeerAddress(), peerInfo.getPeerPort());
-            in = new DataInputStream(connection.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
 
             // send handshake message
@@ -53,7 +52,8 @@ public class Client extends Thread{
         }
     }
     //send a message to the output stream
-    void sendMessage(ActualMessage msg) {
+    // TODO send
+    public void sendMessage(ActualMessage msg) {
         messageQueue.add(msg);
     }
 
